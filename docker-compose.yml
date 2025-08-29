@@ -1,0 +1,156 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dropout_db
+    environment:
+      POSTGRES_DB: dropout_db
+      POSTGRES_USER: dropout_user
+      POSTGRES_PASSWORD: dropout_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - dropout_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dropout_user -d dropout_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: dropout_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - dropout_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dropout_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://dropout_user:dropout_password@postgres:5432/dropout_db
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./backend:/app
+      - ./backend/app/ml/models:/app/app/ml/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dropout_network
+    restart: unless-stopped
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dropout_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_APP_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - dropout_network
+    restart: unless-stopped
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: dropout_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - dropout_network
+    restart: unless-stopped
+
+  # ML Model Training Service
+  ml_training:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.ml
+    container_name: dropout_ml_training
+    environment:
+      - DATABASE_URL=postgresql://dropout_user:dropout_password@postgres:5432/dropout_db
+      - MODEL_PATH=/app/app/ml/models
+    volumes:
+      - ./backend:/app
+      - ./backend/app/ml/models:/app/app/ml/models
+      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - dropout_network
+    profiles:
+      - training
+    command: ["python", "scripts/train_models.py"]
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  dropout_network:
+    driver: bridge
+
+# Development overrides
+x-development: &development
+  environment:
+    - ENVIRONMENT=development
+    - DEBUG=true
+    - LOG_LEVEL=DEBUG
+
+x-production: &production
+  environment:
+    - ENVIRONMENT=production
+    - DEBUG=false
+    - LOG_LEVEL=INFO
+  restart: unless-stopped
+  deploy:
+    replicas: 2
+    resources:
+      limits:
+        memory: 1G
+        cpus: "0.5"
+      reservations:
+        memory: 512M
+        cpus: "0.25"
