@@ -55,5 +55,5 @@ settings = Settings()
 
 # Environment-specific overrides
 if os.getenv("ENVIRONMENT") == "development":
+    # Enable debug in development, but don't override DATABASE_URL provided via env
     settings.DEBUG = True
-    settings.DATABASE_URL = "postgresql://user:password@localhost/dropout_dev_db"

@@ -1,0 +1,6 @@
+student_id,first_name,last_name,email,phone,class_name,section,academic_year,enrollment_date,guardian_name,guardian_phone
+ST001,John,Doe,john.doe@email.com,+1234567890,10th,A,2024-25,2024-01-15,Jane Doe,+1234567891
+ST002,Jane,Smith,jane.smith@email.com,+1234567892,10th,A,2024-25,2024-01-15,John Smith,+1234567893
+ST003,Mike,Johnson,mike.johnson@email.com,+1234567894,10th,B,2024-25,2024-01-15,Sarah Johnson,+1234567895
+ST004,Emily,Brown,emily.brown@email.com,+1234567896,11th,A,2024-25,2024-01-15,David Brown,+1234567897
+ST005,David,Wilson,david.wilson@email.com,+1234567898,11th,B,2024-25,2024-01-15,Lisa Wilson,+1234567899

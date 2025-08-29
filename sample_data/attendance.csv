@@ -1,0 +1,13 @@
+student_id,date,subject,is_present,remarks
+ST001,2024-01-15,Mathematics,true,
+ST001,2024-01-15,English,true,
+ST001,2024-01-16,Mathematics,false,Medical leave
+ST001,2024-01-16,English,true,
+ST002,2024-01-15,Mathematics,true,
+ST002,2024-01-15,English,true,
+ST002,2024-01-16,Mathematics,true,
+ST002,2024-01-16,English,true,
+ST003,2024-01-15,Mathematics,false,Personal reason
+ST003,2024-01-15,English,true,
+ST003,2024-01-16,Mathematics,true,
+ST003,2024-01-16,English,false,Family emergency

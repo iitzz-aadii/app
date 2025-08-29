@@ -1,0 +1,11 @@
+student_id,exam_name,subject,marks_obtained,total_marks,exam_date,remarks
+ST001,Midterm 1,Mathematics,85,100,2024-01-20,Good performance
+ST001,Midterm 1,English,78,100,2024-01-20,Good performance
+ST002,Midterm 1,Mathematics,92,100,2024-01-20,Excellent performance
+ST002,Midterm 1,English,88,100,2024-01-20,Good performance
+ST003,Midterm 1,Mathematics,65,100,2024-01-20,Needs improvement
+ST003,Midterm 1,English,72,100,2024-01-20,Average performance
+ST004,Midterm 1,Mathematics,95,100,2024-01-20,Outstanding performance
+ST004,Midterm 1,English,90,100,2024-01-20,Excellent performance
+ST005,Midterm 1,Mathematics,58,100,2024-01-20,Needs significant improvement
+ST005,Midterm 1,English,68,100,2024-01-20,Below average

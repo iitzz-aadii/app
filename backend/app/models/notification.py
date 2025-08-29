@@ -60,9 +60,7 @@ class Notification(Base):
 
     # Metadata
     priority = Column(String, default="normal")  # low, normal, high, urgent
-    metadata = Column(
-        JSON, nullable=True
-    )  # Additional data like risk scores, links, etc.
+    meta = Column(JSON, nullable=True)  # Additional data like risk scores, links, etc.
 
     # Retry logic
     retry_count = Column(Integer, default=0)

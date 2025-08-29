@@ -68,6 +68,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: development
     container_name: dropout_frontend
     ports:
       - "3000:3000"
